@@ -145,6 +145,8 @@ CREATE POLICY "Authenticated users can create orders" ON public.orders FOR INSER
 ALTER TABLE public.order_items ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users can view their own order items" ON public.order_items FOR SELECT 
 USING ( EXISTS (SELECT 1 FROM public.orders WHERE id = order_items.order_id AND buyer_id = auth.uid()) );
+CREATE POLICY "Users can create their own order items" ON public.order_items FOR INSERT TO authenticated 
+WITH CHECK ( EXISTS (SELECT 1 FROM public.orders WHERE id = order_items.order_id AND buyer_id = auth.uid()) );
 
 -- STOCKAGE (STORAGE)
 CREATE POLICY "Images are public" ON storage.objects FOR SELECT USING (bucket_id IN ('avatars', 'products'));
