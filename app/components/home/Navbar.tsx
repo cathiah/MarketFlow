@@ -74,6 +74,8 @@ export const Navbar: React.FC<NavbarProps> = React.memo(function Navbar({ user, 
       <div className="flex items-center gap-8">
         <ul className="flex gap-6 text-sm font-medium">
           <NavItem to={href("/")} label="Accueil" />
+          {!!user && <NavItem to={href("/orders")} label="Mes commandes" />}
+          {!!user && <NavItem to={href("/notifications")} label="Notifications" />}
           {isAuthorized && <NavItem to={href("/dashboard/profile")} label="Dashboard" />}
         </ul>
 

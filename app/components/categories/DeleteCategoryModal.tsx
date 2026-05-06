@@ -52,12 +52,12 @@ export const DeleteCategoryModal: React.FC<DeleteModalProps> = React.memo(functi
             Annuler
           </button>
           
-          <fetcher.Form method="post" action={href("/categories/delete")}>
+          <fetcher.Form method="post" action={href("/dashboard/categories")}>
             <input type="hidden" name="id" value={category.id} />
             <button 
               type="submit"
               disabled={isDeleting}
-              className="btn btn-error min-w-[120px]"
+              className="btn btn-error min-w-30"
             >
               {isDeleting ? (
                 <span className="loading loading-spinner loading-sm"></span>

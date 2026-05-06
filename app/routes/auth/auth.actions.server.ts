@@ -52,15 +52,18 @@ export async function handleAuthAction(request: Request) {
     let { identifier, password } = result.data;
     let email = identifier;
 
+    // Si l'identifiant n'est pas un email, chercher l'email via le username
     if (!identifier.includes("@")) {
-      const { data: rpcData, error: rpcError } = await supabase.rpc('get_email_by_username', { 
-        username_input: identifier 
-      });
+      const { data: profileData, error: queryError } = await supabase
+        .from("profiles")
+        .select("email")
+        .eq("username", identifier)
+        .single();
 
-      if (rpcError || !rpcData?.[0]?.res_email) {
+      if (queryError || !profileData?.email) {
         return data({ success: false, error: "Identifiants incorrects." }, { headers });
       }
-      email = rpcData[0].res_email;
+      email = profileData.email;
     }
 
     const { error } = await supabase.auth.signInWithPassword({ email, password });

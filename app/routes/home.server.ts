@@ -46,11 +46,32 @@ export async function performCreateOrder(request: Request) {
     );
   }
 
+  const priceNum = parseFloat(price);
+  if (isNaN(priceNum) || priceNum < 0) {
+    return data(
+      { success: false, message: "Prix invalide." },
+      { headers }
+    );
+  }
+
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
     return data(
       { success: false, message: "Vous devez être connecté pour passer une commande." },
+      { headers }
+    );
+  }
+
+  const { data: profile, error: profileError } = await supabase
+    .from("profiles")
+    .select("id")
+    .eq("id", user.id)
+    .single();
+
+  if (profileError || !profile) {
+    return data(
+      { success: false, message: "Votre profil n'est pas complet. Veuillez vous reconnecter." },
       { headers }
     );
   }
@@ -75,7 +96,7 @@ export async function performCreateOrder(request: Request) {
     );
   }
 
-  const totalAmount = parseFloat(price) * quantity;
+  const totalAmount = priceNum * quantity;
 
   const { data: order, error: orderError } = await supabase
     .from("orders")
@@ -84,6 +105,7 @@ export async function performCreateOrder(request: Request) {
     .single();
 
   if (orderError) {
+    console.error("Erreur lors de la création de la commande:", orderError);
     return data(
       { success: false, message: "Impossible de créer la commande. Veuillez réessayer." },
       { headers }
@@ -94,24 +116,13 @@ export async function performCreateOrder(request: Request) {
     order_id: order.id,
     product_id: productId,
     quantity,
-    unit_price: parseFloat(price),
+    unit_price: priceNum,
   });
 
   if (itemError) {
+    console.error("Erreur lors de l'enregistrement des articles:", itemError);
     return data(
       { success: false, message: "Erreur lors de l'enregistrement des articles." },
-      { headers }
-    );
-  }
-
-  const { error: updateError } = await supabase
-    .from("products")
-    .update({ stock_quantity: product.stock_quantity - quantity })
-    .eq("id", productId);
-
-  if (updateError) {
-    return data(
-      { success: false, message: "Commande créée mais la mise à jour du stock a échoué." },
       { headers }
     );
   }

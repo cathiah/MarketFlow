@@ -28,8 +28,9 @@ export function DashboardSidebar({ isAdmin }: { isAdmin: boolean }) {
           </SidebarSection>
 
           <SidebarSection label="Gestion Boutique">
+            <SidebarItem to={href("/dashboard")} icon={LayoutDashboard} label="Tableau de bord" end />
             <SidebarItem to={href("/dashboard/products")} icon={FileText} label="Produits" end />
-            <SidebarItem to={href("/dashboard/orders/notifications")} icon={FileText} label="Commandes" end />
+            <SidebarItem to={href("/dashboard/orders")} icon={FileText} label="Commandes" end />
             {isAdmin && <SidebarItem to={href("/dashboard/categories")} icon={Tag} label="Catégories" />}
           </SidebarSection>
 

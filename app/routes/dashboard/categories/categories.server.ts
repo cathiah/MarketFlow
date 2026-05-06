@@ -24,8 +24,6 @@ export async function getCategories(request: Request) {
     .order("name")
     .returns<CategoryWithParent[]>();
 
-  // On retourne un objet contenant la clé 'categories' et les headers
-  // pour correspondre au destructuring : const { categories, headers } = ...
   return { categories: categories || [], headers };
 }
 

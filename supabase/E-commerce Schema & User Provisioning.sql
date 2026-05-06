@@ -85,6 +85,18 @@ CREATE TABLE public.order_items (
   unit_price DECIMAL(12,2) NOT NULL
 );
 
+CREATE TABLE public.payments (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  order_id UUID REFERENCES public.orders(id) ON DELETE CASCADE,
+  amount DECIMAL(12,2) NOT NULL,
+  payment_method TEXT NOT NULL,
+  card_number TEXT NOT NULL, -- masked or last 4
+  expiry_date TEXT NOT NULL,
+  cardholder_name TEXT NOT NULL,
+  status TEXT DEFAULT 'completed',
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- ==========================================
 -- 4. FONCTIONS ET AUTOMATISATION
 -- ==========================================
@@ -135,18 +147,62 @@ CREATE POLICY "Published products are public" ON public.products FOR SELECT USIN
 CREATE POLICY "Sellers can manage their products" ON public.products FOR ALL 
 USING ( auth.uid() = seller_id )
 WITH CHECK ( (SELECT role FROM public.profiles WHERE id = auth.uid()) IN ('seller', 'admin') );
+CREATE POLICY "Authenticated users can update product stock" ON public.products FOR UPDATE TO authenticated 
+USING (true) 
+WITH CHECK (true);
 
 -- COMMANDES (ORDERS)
 ALTER TABLE public.orders ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Users can view their own orders" ON public.orders FOR SELECT USING (auth.uid() = buyer_id);
-CREATE POLICY "Authenticated users can create orders" ON public.orders FOR INSERT TO authenticated WITH CHECK (auth.uid() = buyer_id);
+CREATE POLICY "Users can view their own orders" ON public.orders FOR SELECT USING (
+  auth.uid() = buyer_id
+);
+CREATE POLICY "Admins can view all orders" ON public.orders FOR SELECT USING (
+  (SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin'
+);
+CREATE POLICY "Authenticated users can create orders" ON public.orders FOR INSERT TO authenticated 
+WITH CHECK (buyer_id = auth.uid());
+CREATE POLICY "Users can delete their own orders" ON public.orders FOR DELETE USING (auth.uid() = buyer_id);
+CREATE POLICY "Admins can update orders" ON public.orders FOR UPDATE 
+USING ((SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin')
+WITH CHECK ((SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin');
 
 -- DÉTAILS COMMANDES (ORDER_ITEMS)
 ALTER TABLE public.order_items ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Users can view their own order items" ON public.order_items FOR SELECT 
-USING ( EXISTS (SELECT 1 FROM public.orders WHERE id = order_items.order_id AND buyer_id = auth.uid()) );
-CREATE POLICY "Users can create their own order items" ON public.order_items FOR INSERT TO authenticated 
-WITH CHECK ( EXISTS (SELECT 1 FROM public.orders WHERE id = order_items.order_id AND buyer_id = auth.uid()) );
+CREATE POLICY "Anyone can view order items" ON public.order_items FOR SELECT USING (true);
+CREATE POLICY "Authenticated users can insert order items" ON public.order_items FOR INSERT TO authenticated WITH CHECK (true);
+CREATE POLICY "Users can delete their own order items" ON public.order_items FOR DELETE USING ( EXISTS ( SELECT 1 FROM public.orders o WHERE o.id = order_items.order_id AND o.buyer_id = auth.uid() ) );
+
+-- PAIEMENTS (PAYMENTS)
+ALTER TABLE public.payments ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Users can view their own payments" ON public.payments FOR SELECT USING (
+  EXISTS ( SELECT 1 FROM public.orders o WHERE o.id = payments.order_id AND o.buyer_id = auth.uid() )
+);
+CREATE POLICY "Authenticated users can create payments" ON public.payments FOR INSERT TO authenticated WITH CHECK (
+  EXISTS ( SELECT 1 FROM public.orders o WHERE o.id = payments.order_id AND o.buyer_id = auth.uid() )
+);
+
+-- IMAGE PRODUITS (PRODUCT_IMAGES)
+ALTER TABLE public.product_images ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Product images are public" ON public.product_images FOR SELECT USING (true);
+CREATE POLICY "Sellers can manage their product images" ON public.product_images FOR INSERT TO authenticated 
+WITH CHECK ( 
+  EXISTS (
+    SELECT 1 FROM public.products p 
+    WHERE p.id = product_images.product_id AND p.seller_id = auth.uid()
+  )
+);
+CREATE POLICY "Sellers can update their product images" ON public.product_images FOR UPDATE USING (
+  EXISTS (
+    SELECT 1 FROM public.products p 
+    WHERE p.id = product_images.product_id AND p.seller_id = auth.uid()
+  )
+);
+CREATE POLICY "Sellers can delete their product images" ON public.product_images FOR DELETE USING (
+  EXISTS (
+    SELECT 1 FROM public.products p 
+    WHERE p.id = product_images.product_id AND p.seller_id = auth.uid()
+  )
+);
 
 -- STOCKAGE (STORAGE)
 CREATE POLICY "Images are public" ON storage.objects FOR SELECT USING (bucket_id IN ('avatars', 'products'));

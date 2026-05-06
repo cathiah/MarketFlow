@@ -124,7 +124,7 @@ export function OrderModal({ product, onClose }: OrderModalProps) {
         {!result?.success && (
           <fetcher.Form method="post">
             <input type="hidden" name="productId" value={product.id} />
-            <input type="hidden" name="price" value={product.price} />
+            <input type="hidden" name="price" value={product.price.toString()} />
             <input type="hidden" name="quantity" value={quantity} />
 
             <div className="modal-action mt-0 gap-2">

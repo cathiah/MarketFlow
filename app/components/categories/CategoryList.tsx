@@ -1,7 +1,8 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { Link, href, useFetcher } from "react-router";
 import { Plus, Edit, Trash2, Tag } from "lucide-react";
 import type { CategoryWithParent } from "~/routes/dashboard/categories/categories.server";
+import { DeleteCategoryModal } from "./DeleteCategoryModal";
 
 interface CategoryListProps {
   categories: CategoryWithParent[];
@@ -9,26 +10,14 @@ interface CategoryListProps {
 
 export function CategoryList({ categories }: CategoryListProps) {
   const fetcher = useFetcher();
-  const modalRef = useRef<HTMLDialogElement>(null);
   const [targetCategory, setTargetCategory] = useState<CategoryWithParent | null>(null);
 
   const openModal = (cat: CategoryWithParent) => {
     setTargetCategory(cat);
-    modalRef.current?.showModal();
   };
 
   const closeModal = () => {
-    modalRef.current?.close();
     setTargetCategory(null);
-  };
-
-  const handleDelete = () => {
-    if (!targetCategory) return;
-    fetcher.submit(
-      { categoryId: targetCategory.id }, 
-      { method: "DELETE", action: href("/dashboard/categories") }
-    );
-    closeModal();
   };
 
   return (
@@ -84,37 +73,11 @@ export function CategoryList({ categories }: CategoryListProps) {
         )}
       </div>
 
-      <dialog ref={modalRef} className="modal">
-        <div className="modal-box bg-base-200 border border-base-content/10 rounded-2xl">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="bg-error/10 text-error p-2 rounded-xl">
-              <Trash2 size={20} />
-            </div>
-            <h3 className="font-black text-lg text-white">Supprimer la catégorie</h3>
-          </div>
-
-          <p className="text-base-content/60 text-sm mt-3">
-            Êtes-vous sûr de vouloir supprimer la catégorie{" "}
-            <span className="text-white font-semibold">
-              {targetCategory?.name}
-            </span>{" "}
-            ? Cette action est irréversible.
-          </p>
-
-          <div className="modal-action mt-6">
-            <button onClick={closeModal} className="btn btn-ghost btn-sm rounded-xl">
-              Annuler
-            </button>
-            <button onClick={handleDelete} className="btn btn-error btn-sm rounded-xl">
-              <Trash2 size={15} />
-              Confirmer
-            </button>
-          </div>
-        </div>
-        <form method="dialog" className="modal-backdrop">
-          <button onClick={closeModal}>Fermer</button>
-        </form>
-      </dialog>
+      <DeleteCategoryModal 
+        category={targetCategory} 
+        onClose={closeModal} 
+        fetcher={fetcher} 
+      />
     </div>
   );
 }

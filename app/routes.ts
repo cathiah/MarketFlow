@@ -7,20 +7,32 @@ import {
   layout,
 } from "@react-router/dev/routes";
 
-const relative = (base: string) => (path: string) => `${base}/${path}`;
+const resolveRoute = (path: string) => `./routes/${path}`;
 
-const dashboardDir = relative("routes/dashboard");
-const productsDir = relative("routes/dashboard/products");
-const categoriesDir = relative("routes/dashboard/categories");
-const articlesDir = relative("routes/articles");
-const profileDir = relative("routes/dashboard/profile");
-const adminDir = relative("routes/dashboard/admin");
-const authDir = relative("routes/auth");
+const dashboardDir = (path: string) => resolveRoute(`dashboard/${path}`);
+const productsDir = (path: string) => resolveRoute(`dashboard/products/${path}`);
+const categoriesDir = (path: string) => resolveRoute(`dashboard/categories/${path}`);
+const articlesDir = (path: string) => resolveRoute(`articles/${path}`);
+const notificationsDir = (path: string) => resolveRoute(`notifications/${path}`);
+const ordersDir = (path: string) => resolveRoute(`orders/${path}`);
+const profileDir = (path: string) => resolveRoute(`dashboard/profile/${path}`);
+const adminDir = (path: string) => resolveRoute(`dashboard/admin/${path}`);
+const authDir = (path: string) => resolveRoute(`auth/${path}`);
 
 export default [
-  layout("routes/_layout.tsx", [
-    index("routes/_index.tsx"),
-    route("article/:slug", articlesDir("[slug]/_index.tsx"))
+  layout(resolveRoute("_layout.tsx"), [
+    index(resolveRoute("_index.tsx")),
+    ...prefix("article", [
+      route(":slug", articlesDir("[slug]/_index.tsx")),
+    ]),
+    
+    ...prefix("notifications", [
+      index(notificationsDir("_index.tsx")),
+    ]),
+
+    ...prefix("orders", [
+      index(ordersDir("_index.tsx")),
+    ]),
   ]),
 
   layout(authDir("_layout.tsx"), [
@@ -28,34 +40,38 @@ export default [
       route("login", authDir("login.tsx")),
       route("register", authDir("register.tsx")),
       route("logout", authDir("logout.tsx")),
-    ])
+    ]),
   ]),
 
   layout(dashboardDir("_layout.tsx"), [
-    ...prefix("dashboard/profile", [
-      index(profileDir("_index.tsx")),
-      route("edit", profileDir("edit.tsx")),
-    ]),
-
-    ...prefix("dashboard/products", [
-      index(productsDir("_index.tsx")),
-      route("add", productsDir("add.tsx")),
-      route(":slug", productsDir("[slug]/_index.tsx")),
-      route(":slug/edit", productsDir("[slug]/edit.tsx")),
-    ]),
-
-    ...prefix("dashboard/categories", [
-      index(categoriesDir("_index.tsx")),
-      route("add", categoriesDir("add.tsx")),
-      route(":slug/edit", categoriesDir("[slug]/edit.tsx")),
-    ]),
-
-    ...prefix("dashboard/orders", [
-      route("notifications", dashboardDir("orders/notifications.tsx")),
-    ]),
-
-    ...prefix("dashboard/admin", [
-      route("users", adminDir("users.tsx")),
+    ...prefix("dashboard", [
+      index(dashboardDir("_index.tsx")),
+      
+      ...prefix("profile", [
+        index(profileDir("_index.tsx")),
+        route("edit", profileDir("edit.tsx")),
+      ]),
+  
+      ...prefix("products", [
+        index(productsDir("_index.tsx")),
+        route("add", productsDir("add.tsx")),
+        route(":slug", productsDir("[slug]/_index.tsx")),
+        route(":slug/edit", productsDir("[slug]/edit.tsx")),
+      ]),
+  
+      ...prefix("categories", [
+        index(categoriesDir("_index.tsx")),
+        route("add", categoriesDir("add.tsx")),
+        route(":slug/edit", categoriesDir("[slug]/edit.tsx")),
+      ]),
+  
+      ...prefix("orders", [
+        index(dashboardDir("orders/_index.tsx")),
+      ]),
+  
+      ...prefix("admin", [
+        route("users", adminDir("users.tsx")),
+      ]),
     ]),
   ]),
 ] satisfies RouteConfig;
