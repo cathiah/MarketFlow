@@ -8,13 +8,12 @@ export async function performUpdateProfile(request: Request) {
 
   if (!user) return redirect(href("/auth/login"), { headers });
 
-  const updates = {
-    full_name: formData.get("full_name") as string,
-    username: formData.get("username") as string,
-    shipping_address: formData.get("shipping_address") as string,
-    billing_address: formData.get("billing_address") as string,
-    updated_at: new Date().toISOString(),
-  };
+ const updates = {
+  full_name: formData.get("full_name") as string,
+  shipping_address: formData.get("shipping_address") as string,
+  billing_address: formData.get("billing_address") as string,
+  updated_at: new Date().toISOString(),
+};
 
   let avatar_url = formData.get("current_avatar_url") as string;
   const avatarFile = formData.get("avatar") as File;

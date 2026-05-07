@@ -21,6 +21,16 @@ interface TextareaGroupProps {
   color?: DaisyColor;
 }
 
+interface InputGroupProps {
+  name: string;
+  label: string;
+  defaultValue?: string;
+  icon?: React.ReactNode;
+  placeholder?: string;
+  color?: DaisyColor;
+  disabled?: boolean;
+}
+
 export const ProfilEditView: React.FC<ProfilEditViewProps> = React.memo(function ProfilEditView({ profile }) {
   const navigation = useNavigation();
   const isUpdating = navigation.state === "submitting";
@@ -50,7 +60,7 @@ export const ProfilEditView: React.FC<ProfilEditViewProps> = React.memo(function
               <FormSection title="Général" colorClass="primary">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <InputGroup name="full_name" label="Nom Complet" defaultValue={initialValues.full_name} icon={<User size={16} />} placeholder="Ex: Jean Dupont" color="primary" />
-                  <InputGroup name="username" label="Nom d'utilisateur" defaultValue={initialValues.username} icon={<Fingerprint size={16} />} placeholder="identifiant" color="primary" />
+                  <InputGroup name="username" label="Nom d'utilisateur" defaultValue={initialValues.username} icon={<Fingerprint size={16} />} placeholder="identifiant" color="primary" disabled />
                 </div>
               </FormSection>
 
@@ -75,16 +85,28 @@ export const ProfilEditView: React.FC<ProfilEditViewProps> = React.memo(function
   );
 });
 
-// Helpers internes pour la lisibilité
-const InputGroup: React.FC<any> = React.memo(function InputGroup({ name, label, defaultValue, icon, placeholder, color }) {
+
+const InputGroup: React.FC<InputGroupProps> = React.memo(function InputGroup({
+  name, label, defaultValue, icon, placeholder, color = "primary", disabled
+}) {
   return (
     <div className="form-control w-full group">
       <label className="label">
-        <span className={`label-text text-[10px] font-black uppercase opacity-40 group-focus-within:text-${color} transition-colors`}>{label}</span>
+        <span className={`label-text text-[10px] font-black uppercase opacity-40 group-focus-within:text-${color} transition-colors`}>
+          {label}
+        </span>
+        {disabled && (
+          <span className="label-text-alt text-xs opacity-40 italic">Non modifiable</span>  // ← badge indicatif
+        )}
       </label>
       <div className="relative">
-        <span className={`absolute left-4 top-1/2 -translate-y-1/2 opacity-20 group-focus-within:opacity-100 group-focus-within:text-${color} transition-all`}>{icon}</span>
-        <input type="text" name={name} defaultValue={defaultValue ?? ""} className={`input input-bordered w-full pl-12 bg-base-300/50 focus:bg-base-300 border-white/5 focus:border-${color} rounded-xl transition-all font-medium`} placeholder={placeholder} />
+        <span className={`absolute left-4 top-1/2 -translate-y-1/2 opacity-20 transition-all`}>{icon}</span>
+        <input type="text" name={name} defaultValue={defaultValue ?? ""} disabled={disabled} 
+          className={`input input-bordered w-full pl-12 bg-base-300/50 border-white/5 rounded-xl font-medium
+            ${disabled ? "opacity-50 cursor-not-allowed" : `focus:bg-base-300 focus:border-${color} transition-all`}
+          `}
+          placeholder={placeholder}
+        />
       </div>
     </div>
   );

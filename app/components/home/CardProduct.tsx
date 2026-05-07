@@ -42,7 +42,7 @@ const CardProduct: React.FC<CardProductProps> = ({ product, onBuy }) => {
           {product.title}
         </h2>
 
-        <p className="text-sm text-base-content/70 line-clamp-2 min-h-[40px]">
+        <p className="text-sm text-base-content/70 line-clamp-2 min-h-10">
           {product.description}
         </p>
 

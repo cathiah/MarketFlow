@@ -47,7 +47,7 @@ export async function performGetNotifications(request: Request) {
         )
       `)
       .in("id", orderIds)
-      .eq("status", "pending")
+      .in("status", ["paid", "shipped", "delivered"])
       .order("created_at", { ascending: false });
 
     if (error) throw new Response(error.message, { status: 500, headers });
