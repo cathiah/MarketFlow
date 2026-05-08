@@ -4,9 +4,9 @@ import {
   FolderTree, Type, Link2, Save, PlusCircle, 
   ArrowLeft
 } from "lucide-react";
-import { StatusMessage } from "../shared/StatusMessage";
+import { StatusMessage } from "~/components/shared/StatusMessage";
 import { slugify } from "~/utils/slugify";
-import { InputField, FormActions } from "../shared/FormFields";
+import { InputField, FormActions } from "~/components/shared/FormFields";
 
 interface Category {
   id: string;

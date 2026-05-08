@@ -1,6 +1,6 @@
 import type { Route } from "./+types/_index";
 import { performGetNotifications, performUpdateOrderStatus } from "./orders.server";
-import { PendingOrdersView } from "~/components/orders/PendingOrdersView";
+import { PendingOrdersView } from "~/components/dashboard/orders/PendingOrdersView";
 
 import { data } from "react-router";
 

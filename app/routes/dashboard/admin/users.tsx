@@ -1,6 +1,6 @@
 import type { Route } from "./+types/users";
 import { performGetUsers, performDeleteUser } from "./users.server";
-import { UserList } from "~/components/users/UserList";
+import { UserList } from "~/components/dashboard/admin/UserList";
 
 export async function loader({ request }: Route.LoaderArgs) {
   return await performGetUsers(request);

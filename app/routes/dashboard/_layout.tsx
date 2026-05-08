@@ -34,17 +34,12 @@ export async function loader({ request }: Route.LoaderArgs) {
     throw redirect(href("/"), { headers });
   }
 
-  let finalAvatarUrl = profile.avatar_url;
-  if (profile.avatar_url && !profile.avatar_url.startsWith('http')) {
-    finalAvatarUrl = supabase.storage.from("avatars").getPublicUrl(profile.avatar_url).data.publicUrl;
-  }
+  const avatar_url =
+    profile.avatar_url && !profile.avatar_url.startsWith("http")
+      ? supabase.storage.from("avatars").getPublicUrl(profile.avatar_url).data.publicUrl
+      : profile.avatar_url;
 
-  const user: Profile = {
-    ...profile,
-    avatar_url: finalAvatarUrl
-  };
-
-  return data({ user }, { headers });
+  return data({ user: { ...profile, avatar_url } satisfies Profile }, { headers });
 }
 
 export default function DashboardLayout({ loaderData: { user } }: Route.ComponentProps) {

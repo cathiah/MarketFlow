@@ -1,4 +1,5 @@
 import type { Profile } from "./profile";
+import type { Payment } from "./payment";
 
 export type OrderStatus = 'pending' | 'paid' | 'shipped' | 'delivered' | 'cancelled';
 
@@ -23,4 +24,5 @@ export interface Order {
   created_at: string;
   buyer?: Pick<Profile, 'full_name' | 'email'>;
   order_items: OrderItem[];
+  payments?: Payment[]; // Informations de paiement (optionnel pour compatibilité)
 }

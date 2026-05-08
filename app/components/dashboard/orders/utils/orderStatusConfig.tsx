@@ -1,4 +1,4 @@
-import { CheckCircle2, XCircle, Clock, Package } from "lucide-react";
+import { CheckCircle2, XCircle, Clock, Package, Truck } from "lucide-react";
 
 export const getStatusConfig = (status: string) => {
   switch (status) {
@@ -12,13 +12,13 @@ export const getStatusConfig = (status: string) => {
       return {
         label: "En cours de livraison",
         class: "badge-info",
-        icon: <Package className="w-5 h-5 text-info" />,
+        icon: <Truck className="w-5 h-5 text-info" />,
       };
     case "delivered":
       return {
         label: "Livrée",
-        class: "badge-success",
-        icon: <CheckCircle2 className="w-5 h-5 text-success" />,
+        class: "badge-primary",
+        icon: <CheckCircle2 className="w-5 h-5 text-primary" />,
       };
     case "cancelled":
       return {

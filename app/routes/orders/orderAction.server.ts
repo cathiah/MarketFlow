@@ -1,8 +1,7 @@
 import { createClient } from "~/lib/supabase.server";
 import { data } from "react-router";
-import type { PaymentPayload } from "./types";
 import { performDeleteOrder } from "./deleteOrder.server";
-import { performPayOrder } from "./payOrder.server";
+import { performPayOrder, type PaymentPayload } from "./payOrder.server";
 import { performGetBuyerOrders } from "./getBuyerOrders.server";
 
 export async function performOrderAction(request: Request) {
@@ -19,11 +18,26 @@ export async function performOrderAction(request: Request) {
     if (actionType === "delete") {
       await performDeleteOrder(request, orderId);
     } else if (actionType === "pay") {
+      const provider = (formData.get("provider") as string) || "card";
+      
+      // Build payment_details based on provider
+      const payment_details: Record<string, string | number | boolean> = {};
+      
+      if (provider === "card") {
+        // For card payments, extract card info
+        const cardNumber = (formData.get("card_number") as string) || "";
+        payment_details.card_brand = (formData.get("card_brand") as string) || "Unknown";
+        payment_details.last_4 = cardNumber.replace(/\s/g, "").slice(-4);
+        payment_details.cardholder_name = (formData.get("cardholder_name") as string) || "";
+      } else if (provider === "paypal") {
+        // For PayPal payments, extract email
+        payment_details.email = (formData.get("paypal_email") as string) || "";
+      }
+      
       const paymentData: PaymentPayload = {
-        payment_method: (formData.get("payment_method") as string) || "card",
-        card_number: (formData.get("card_number") as string) || "",
-        expiry_date: (formData.get("expiry_date") as string) || "",
-        cardholder_name: (formData.get("cardholder_name") as string) || "",
+        provider: provider as 'stripe' | 'paypal' | 'card',
+        payment_details,
+        external_id: (formData.get("external_id") as string) || undefined,
         shipping_address:
           (formData.get("shipping_address") as string) || undefined,
       };

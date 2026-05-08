@@ -55,7 +55,7 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({ images, title })
             <button
               key={i}
               onClick={() => setCurrentIndex(i)}
-              className={`relative flex-shrink-0 w-20 h-20 rounded-xl overflow-hidden border-2 transition-all ${
+              className={`relative shrink-0 w-20 h-20 rounded-xl overflow-hidden border-2 transition-all ${
                 currentIndex === i ? "border-primary scale-105 shadow-lg" : "border-transparent opacity-50 hover:opacity-100"
               }`}
             >

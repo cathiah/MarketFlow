@@ -1,6 +1,6 @@
 import { Form, Link, href } from "react-router";
 import { LayoutDashboard, X, UserCircle, FileText, Tag, User, LogOut } from "lucide-react";
-import { SidebarItem } from "~/components/products/SidebarItem";
+import { SidebarItem } from "./products/SidebarItem";
 
 export function DashboardSidebar({ isAdmin }: { isAdmin: boolean }) {
   return (
@@ -23,10 +23,6 @@ export function DashboardSidebar({ isAdmin }: { isAdmin: boolean }) {
         </div>
 
         <nav className="flex-1 px-4 py-2 space-y-8 overflow-y-auto">
-          <SidebarSection label="Mon Compte" color="text-primary">
-            <SidebarItem to={href("/dashboard/profile")} icon={UserCircle} label="Profile" />
-          </SidebarSection>
-
           <SidebarSection label="Gestion Boutique">
             <SidebarItem to={href("/dashboard")} icon={LayoutDashboard} label="Tableau de bord" end />
             <SidebarItem to={href("/dashboard/products")} icon={FileText} label="Produits" end />

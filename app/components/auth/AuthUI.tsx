@@ -40,7 +40,7 @@ export const AuthInput: React.FC<AuthInputProps> = ({ label, icon: Icon, showPas
         <input 
           {...props}
           type={inputType}
-          className="w-full h-11 pl-11 pr-12 bg-white/[0.03] border border-white/10 rounded-xl text-sm text-white placeholder:text-white/20 transition-all focus:bg-white/[0.05] focus:border-primary/50 focus:ring-4 focus:ring-primary/10 focus:outline-none disabled:opacity-50"
+          className="w-full h-11 pl-11 pr-12 bg-white/3 border border-white/10 rounded-xl text-sm text-white placeholder:text-white/20 transition-all focus:bg-white/5 focus:border-primary/50 focus:ring-4 focus:ring-primary/10 focus:outline-none disabled:opacity-50"
         />
 
         {isPassword && showPasswordToggle && (

@@ -50,7 +50,7 @@ export function DeleteProductModal({
             type="button"
             onClick={() => onConfirm(product.id)}
             disabled={isSubmitting}
-            className="btn btn-error btn-sm rounded-xl min-w-[110px]"
+            className="btn btn-error btn-sm rounded-xl min-w-27.5"
           >
             {isSubmitting ? (
               <span className="loading loading-spinner loading-xs"></span>

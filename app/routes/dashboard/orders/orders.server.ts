@@ -44,6 +44,9 @@ export async function performGetNotifications(request: Request) {
         order_items (
           id, quantity, unit_price,
           product:product_id (id, title, price)
+        ),
+        payments (
+          id, provider, payment_details, external_id, status, created_at
         )
       `)
       .in("id", orderIds)

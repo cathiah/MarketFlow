@@ -62,7 +62,7 @@ export function TextAreaField({ label, icon: Icon, error, className = "", ...pro
         )}
         <textarea 
           {...props} 
-          className={`textarea textarea-bordered w-full bg-base-300/30 border-white/5 focus:border-primary/50 min-h-[200px] transition-all ${
+          className={`textarea textarea-bordered w-full bg-base-300/30 border-white/5 focus:border-primary/50 min-h-50 transition-all ${
             Icon ? 'pl-12' : 'pl-4'
           } ${error ? 'textarea-error' : ''} ${className}`} 
         />

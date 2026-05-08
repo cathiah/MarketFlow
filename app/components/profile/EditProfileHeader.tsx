@@ -1,4 +1,3 @@
-// components/Profil/EditProfileHeader.tsx
 import React from "react";
 import { Link, href } from "react-router";
 import { ArrowLeft, Save, Loader2 } from "lucide-react";
@@ -11,7 +10,7 @@ export const EditProfileHeader: React.FC<HeaderProps> = React.memo(function Edit
   return (
     <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-base-200/50 p-4 rounded-3xl border border-white/5 shadow-xl">
       <div className="flex items-center gap-4 w-full sm:w-auto">
-        <Link to={href("/dashboard/profile")} className="btn btn-ghost btn-circle bg-base-300/50 hover:bg-primary hover:text-primary-content transition-all duration-300">
+        <Link to={href("/profile")} className="btn btn-ghost btn-circle bg-base-300/50 hover:bg-primary hover:text-primary-content transition-all duration-300">
           <ArrowLeft size={20} />
         </Link>
         <h1 className="text-xl font-black tracking-tight flex items-center gap-2">
@@ -21,7 +20,7 @@ export const EditProfileHeader: React.FC<HeaderProps> = React.memo(function Edit
       </div>
 
       <div className="flex items-center gap-3 w-full sm:w-auto border-t sm:border-t-0 pt-4 sm:pt-0 border-white/5">
-        <Link to={href("/dashboard/profile")} className="btn btn-ghost btn-sm flex-1 sm:flex-none rounded-xl hover:bg-error/10 hover:text-error transition-colors">
+        <Link to={href("/profile")} className="btn btn-ghost btn-sm flex-1 sm:flex-none rounded-xl hover:bg-error/10 hover:text-error transition-colors">
           Annuler
         </Link>
         <button 

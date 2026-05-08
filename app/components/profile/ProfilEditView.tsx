@@ -1,4 +1,3 @@
-// components/Profil/ProfilEditView.tsx
 import React, { useMemo } from "react";
 import { Form, useNavigation } from "react-router";
 import { User, MapPin, CreditCard, Save, Loader2, Fingerprint } from "lucide-react";

@@ -1,4 +1,3 @@
-// components/Profil/AvatarUpload.tsx
 import React, { useState, useCallback, useEffect } from "react";
 import { Camera, User } from "lucide-react";
 
@@ -24,7 +23,7 @@ export const AvatarUpload: React.FC<AvatarProps> = React.memo(function AvatarUpl
 
   return (
     <div className="flex flex-col items-center">
-      <div className="relative group p-1 rounded-[2.5rem] bg-gradient-to-b from-white/10 to-transparent shadow-2xl">
+      <div className="relative group p-1 rounded-[2.5rem] bg-linear-to-b from-white/10 to-transparent shadow-2xl">
         <div className="relative w-48 h-48 rounded-[2.3rem] overflow-hidden bg-black/40 backdrop-blur-xl border border-white/10 transition-all duration-500 group-hover:border-white/30">
           
           {preview ? (
@@ -54,12 +53,12 @@ export const AvatarUpload: React.FC<AvatarProps> = React.memo(function AvatarUpl
           </label>
         </div>
 
-        <div className="absolute -bottom-0 -right-0 w-6 h-6 bg-emerald-500 border-4 border-[#121212] rounded-full shadow-lg shadow-emerald-500/20"></div>
+        <div className="absolute bottom-0 right-0 w-6 h-6 bg-emerald-500 border-4 border-[#121212] rounded-full shadow-lg shadow-emerald-500/20"></div>
       </div>
 
       <div className="mt-6 text-center">
         <h3 className="text-[11px] font-bold uppercase tracking-[0.4em] text-white/50">Avatar</h3>
-        <div className="h-[1px] w-8 bg-gradient-to-r from-transparent via-white/20 to-transparent mx-auto mt-2"></div>
+        <div className="h-px w-8 bg-linear-to-r from-transparent via-white/20 to-transparent mx-auto mt-2"></div>
       </div>
     </div>
   );

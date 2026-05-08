@@ -30,5 +30,5 @@ export async function performUpdateProfile(request: Request) {
   const { error } = await supabase.from("profiles").update({ ...updates, avatar_url }).eq("id", user.id);
   if (error) return data({ error: "Erreur lors de la mise à jour" }, { status: 400, headers });
 
-  return redirect(href("/dashboard/profile"), { headers });
+  return redirect(href("/profile"), { headers });
 }

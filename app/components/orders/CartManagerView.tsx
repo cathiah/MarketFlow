@@ -45,7 +45,6 @@ export const CartManagerView = ({
     setSelectedOrder(null);
   };
 
-  // Fermer les modals automatiquement après succès
   useEffect(() => {
     if (!actionData?.error && navigation.state === "idle") {
       setIsDeleteModalOpen(false);

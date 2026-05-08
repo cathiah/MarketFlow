@@ -1,6 +1,6 @@
 import { createClient } from "~/lib/supabase.server";
 import { data } from "react-router";
-import { ProductForm } from "~/components/products/ProductForm";
+import { ProductForm } from "~/components/dashboard/products/ProductForm";
 import type { Route } from "./+types/edit";
 import type { Product } from "~/types/products";
 import type { Category } from "~/types/category";

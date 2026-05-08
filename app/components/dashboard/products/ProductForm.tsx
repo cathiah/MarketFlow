@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useRef, useEffect, useState } from "react";
 import { useFetcher, Link, href } from "react-router";
 import { Save, PlusCircle, ArrowLeft } from "lucide-react";
-import { StatusMessage } from "../shared/StatusMessage";
+import { StatusMessage } from "~/components/shared/StatusMessage";
 import { slugify } from "~/utils/slugify";
 import { ProductFormFields } from "./ProductFormFields";
 import type { Product } from "~/types/products";

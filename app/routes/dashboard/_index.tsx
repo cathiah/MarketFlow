@@ -21,7 +21,7 @@ export const meta: Route.MetaFunction = () => {
       content: "Accédez à vos outils de vendeur et d'acheteur pour piloter votre activité sur MarketFlow.",
     },
     { property: "og:type", content: "website" },
-    { name: "robots", content: "noindex, nofollow" }, // Recommandé pour les pages privées/dashboard
+    { name: "robots", content: "noindex, nofollow" },
     { name: "viewport", content: "width=device-width, initial-scale=1" },
   ];
 };

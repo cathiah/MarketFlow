@@ -15,7 +15,7 @@ const categoriesDir = (path: string) => resolveRoute(`dashboard/categories/${pat
 const articlesDir = (path: string) => resolveRoute(`articles/${path}`);
 const notificationsDir = (path: string) => resolveRoute(`notifications/${path}`);
 const ordersDir = (path: string) => resolveRoute(`orders/${path}`);
-const profileDir = (path: string) => resolveRoute(`dashboard/profile/${path}`);
+const profileDir = (path: string) => resolveRoute(`profile/${path}`);
 const adminDir = (path: string) => resolveRoute(`dashboard/admin/${path}`);
 const authDir = (path: string) => resolveRoute(`auth/${path}`);
 
@@ -25,6 +25,11 @@ export default [
     ...prefix("article", [
       route(":slug", articlesDir("[slug]/_index.tsx")),
     ]),
+
+    ...prefix("profile", [
+        index(profileDir("_index.tsx")),
+        route("edit", profileDir("edit.tsx")),
+      ]),
     
     ...prefix("notifications", [
       index(notificationsDir("_index.tsx")),
@@ -46,11 +51,6 @@ export default [
   layout(dashboardDir("_layout.tsx"), [
     ...prefix("dashboard", [
       index(dashboardDir("_index.tsx")),
-      
-      ...prefix("profile", [
-        index(profileDir("_index.tsx")),
-        route("edit", profileDir("edit.tsx")),
-      ]),
   
       ...prefix("products", [
         index(productsDir("_index.tsx")),

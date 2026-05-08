@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { Form, useNavigation, useActionData } from "react-router";
 import { User, Lock, LogIn } from "lucide-react";
-import { AuthInput, AuthButton } from "~/components/auth/AuthUI";
+import { AuthInput, AuthButton } from "./AuthUI";
 import { StatusMessage } from "~/components/shared/StatusMessage";
 
 type ActionData = { error?: string | null; success?: boolean | string | null } | null | undefined;

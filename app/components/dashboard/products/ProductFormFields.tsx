@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useImperativeHandle, forwardRef, useCallback, useMemo } from "react";
 import { Type, Link2, Euro, Hash, FileText, ImageIcon, X } from "lucide-react";
-import { InputField, TextAreaField, PublishToggle, FormActions } from "../shared/FormFields";
+import { InputField, TextAreaField, PublishToggle, FormActions } from "~/components/shared/FormFields";
 import type { Product } from "~/types/products";
 import type { Category } from "~/types/category";
 

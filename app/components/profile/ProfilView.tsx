@@ -50,7 +50,7 @@ export function ProfilView({ profile }: ProfilViewProps) {
 
         <div className="z-10 flex-none">
           <Link 
-            to={href("/dashboard/profile/edit")} 
+            to={href("/profile/edit")} 
             className="btn btn-primary rounded-2xl gap-2 shadow-lg shadow-primary/20 hover:scale-105 transition-transform"
           >
             <Settings2 size={18} />

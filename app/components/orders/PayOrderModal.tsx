@@ -1,5 +1,6 @@
 import { XCircle, CreditCard, Loader2 } from "lucide-react";
 import { Form, href } from "react-router";
+import { useState } from "react";
 import type { Order } from "~/types/order";
 
 interface PayOrderModalProps {
@@ -15,6 +16,8 @@ export const PayOrderModal = ({
   error,
   onClose,
 }: PayOrderModalProps) => {
+  const [provider, setProvider] = useState<"card" | "paypal">("card");
+
   return (
     <dialog className="modal modal-open bg-black/40 backdrop-blur-sm">
       <div className="modal-box bg-base-200 border border-base-content/10 rounded-2xl max-w-md">
@@ -37,63 +40,100 @@ export const PayOrderModal = ({
         <Form method="post" action={href("/orders")} className="space-y-4">
           <input type="hidden" name="action" value="pay" />
           <input type="hidden" name="orderId" value={order.id} />
+          <input type="hidden" name="provider" value={provider} />
 
           <div className="form-control">
             <label className="label">
-              <span className="label-text">Méthode de paiement</span>
+              <span className="label-text">Prestataire de paiement</span>
             </label>
             <select
-              name="payment_method"
+              value={provider}
+              onChange={(e) => setProvider(e.target.value as "card" | "paypal")}
               className="select select-bordered"
               required
             >
               <option value="card">Carte bancaire</option>
+              <option value="paypal">PayPal</option>
             </select>
           </div>
 
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text">Numéro de carte</span>
-            </label>
-            <input
-              type="text"
-              name="card_number"
-              placeholder="1234 5678 9012 3456"
-              className="input input-bordered"
-              required
-              pattern="[\d\s]{13,19}"
-              title="Numéro de carte de 13 à 19 chiffres, espaces autorisés"
-            />
-          </div>
+          {provider === "card" && (
+            <>
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text">Marque de carte</span>
+                </label>
+                <select
+                  name="card_brand"
+                  className="select select-bordered"
+                  required
+                >
+                  <option value="">Sélectionner une marque</option>
+                  <option value="visa">Visa</option>
+                  <option value="mastercard">Mastercard</option>
+                  <option value="amex">American Express</option>
+                </select>
+              </div>
 
-          <div className="grid grid-cols-2 gap-4">
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text">Numéro de carte</span>
+                </label>
+                <input
+                  type="text"
+                  name="card_number"
+                  placeholder="1234 5678 9012 3456"
+                  className="input input-bordered"
+                  required
+                  pattern="[\d\s]{13,19}"
+                  title="Numéro de carte de 13 à 19 chiffres, espaces autorisés"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="form-control">
+                  <label className="label">
+                    <span className="label-text">Date d'expiration</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="expiry_date"
+                    placeholder="MM/YY"
+                    className="input input-bordered"
+                    pattern="\d{2}/\d{2}"
+                    title="Format MM/YY"
+                  />
+                </div>
+                <div className="form-control">
+                  <label className="label">
+                    <span className="label-text">Titulaire</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="cardholder_name"
+                    placeholder="John Doe"
+                    className="input input-bordered"
+                    required
+                  />
+                </div>
+              </div>
+            </>
+          )}
+
+          {provider === "paypal" && (
             <div className="form-control">
               <label className="label">
-                <span className="label-text">Date d'expiration</span>
+                <span className="label-text">Email PayPal</span>
               </label>
               <input
-                type="text"
-                name="expiry_date"
-                placeholder="MM/YY"
-                className="input input-bordered"
-                required
-                pattern="\d{2}/\d{2}"
-                title="Format MM/YY"
-              />
-            </div>
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text">Nom du titulaire</span>
-              </label>
-              <input
-                type="text"
-                name="cardholder_name"
-                placeholder="John Doe"
+                type="email"
+                name="paypal_email"
+                placeholder="votre.email@paypal.com"
                 className="input input-bordered"
                 required
               />
             </div>
-          </div>
+          )}
 
           <div className="form-control">
             <label className="label">

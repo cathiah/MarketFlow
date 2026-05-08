@@ -30,16 +30,16 @@ export const ProductRow: React.FC<ProductRowProps> = React.memo(function Product
       </td>
       
       <td className="min-w-0">
-        <div className="font-bold text-xs md:text-sm truncate max-w-[120px] md:max-w-[300px]" title={product.title}>
+        <div className="font-bold text-xs md:text-sm truncate max-w-30 md:max-w-75" title={product.title}>
           {product.title}
         </div>
-        <div className="text-[9px] md:text-[10px] opacity-40 font-mono truncate max-w-[120px]">
+        <div className="text-[9px] md:text-[10px] opacity-40 font-mono truncate max-w-30">
           {product.slug}
         </div>
       </td>
 
       <td className="hidden lg:table-cell">
-        <span className="badge badge-ghost badge-sm border-white/5 truncate max-w-[100px]">
+        <span className="badge badge-ghost badge-sm border-white/5 truncate max-w-25">
           {product.categories?.name || 'Général'}
         </span>
       </td>

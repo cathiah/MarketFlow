@@ -79,7 +79,7 @@ export const MyProductsView: React.FC<MyProductsViewProps> = React.memo(function
               {statusFilter === "all" ? "Tous les statuts" : statusFilter === "published" ? "En ligne" : "Brouillons"}
             </span>
           </label>
-          <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow-xl bg-base-300 rounded-xl w-52 border border-white/10 mt-2">
+          <ul tabIndex={0} className="dropdown-content z-1 menu p-2 shadow-xl bg-base-300 rounded-xl w-52 border border-white/10 mt-2">
             <li><button onClick={setFilterAll}>Tous les produits</button></li>
             <li><button onClick={setFilterPublished}>En ligne</button></li>
             <li><button onClick={setFilterDraft}>Brouillons</button></li>
@@ -88,12 +88,12 @@ export const MyProductsView: React.FC<MyProductsViewProps> = React.memo(function
       </div>
 
       <div className="relative overflow-hidden rounded-2xl border border-white/5 bg-base-200/30 backdrop-blur-md">
-        <div className="overflow-x-auto min-h-[400px]">
+        <div className="overflow-x-auto min-h-100">
           <table className="table table-zebra w-full table-auto md:table-fixed">
             <thead className="bg-base-300/50">
               <tr className="text-[10px] uppercase tracking-widest opacity-60 border-none">
                 <th className="w-16 md:w-24">Aperçu</th>
-                <th className="min-w-[140px]">Détails</th>
+                <th className="min-w-35">Détails</th>
                 <th className="hidden lg:table-cell w-40">Catégorie</th>
                 <th className="w-24">Prix</th>
                 <th className="hidden sm:table-cell w-20">Stock</th>

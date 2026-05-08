@@ -1,4 +1,4 @@
-import { ProductView } from "~/components/products/ProductView";
+import { ProductView } from "~/components/dashboard/products/ProductView";
 import type { Route } from "./+types/_index";
 import { getProductBySlug } from "./product.server";
 

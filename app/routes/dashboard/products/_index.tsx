@@ -1,5 +1,5 @@
 import { data } from "react-router";
-import { MyProductsView } from "~/components/products/MyProductsView";
+import { MyProductsView } from "~/components/dashboard/products/MyProductsView";
 import type { Route } from "./+types/_index";
 import { getSellerProducts, performDeleteProduct } from "./products.server";
 

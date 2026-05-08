@@ -6,6 +6,7 @@ DROP FUNCTION IF EXISTS public.handle_new_user();
 DROP TABLE IF EXISTS public.reviews CASCADE;
 DROP TABLE IF EXISTS public.order_items CASCADE;
 DROP TABLE IF EXISTS public.orders CASCADE;
+DROP TABLE IF EXISTS public.payments CASCADE;
 DROP TABLE IF EXISTS public.product_images CASCADE;
 DROP TABLE IF EXISTS public.products CASCADE;
 DROP TABLE IF EXISTS public.categories CASCADE;
@@ -89,10 +90,9 @@ CREATE TABLE public.payments (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   order_id UUID REFERENCES public.orders(id) ON DELETE CASCADE,
   amount DECIMAL(12,2) NOT NULL,
-  payment_method TEXT NOT NULL,
-  card_number TEXT NOT NULL, -- masked or last 4
-  expiry_date TEXT NOT NULL,
-  cardholder_name TEXT NOT NULL,
+  provider TEXT NOT NULL, -- 'stripe', 'paypal', etc.
+  payment_details JSONB NOT NULL, -- {card_brand, last_4, email, etc.}
+  external_id TEXT, -- transaction ID from provider
   status TEXT DEFAULT 'completed',
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -153,6 +153,15 @@ WITH CHECK (true);
 
 -- COMMANDES (ORDERS)
 ALTER TABLE public.orders ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Sellers can view orders containing their products"
+ON public.orders FOR SELECT
+USING (
+  EXISTS (
+    SELECT 1 FROM public.order_items oi
+    JOIN public.products p ON p.id = oi.product_id
+    WHERE oi.order_id = orders.id AND p.seller_id = auth.uid()
+  )
+);
 CREATE POLICY "Users can view their own orders" ON public.orders FOR SELECT USING (
   auth.uid() = buyer_id
 );
@@ -177,8 +186,25 @@ ALTER TABLE public.payments ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users can view their own payments" ON public.payments FOR SELECT USING (
   EXISTS ( SELECT 1 FROM public.orders o WHERE o.id = payments.order_id AND o.buyer_id = auth.uid() )
 );
+CREATE POLICY "Users can update their own orders" ON public.orders FOR UPDATE USING (auth.uid() = buyer_id) WITH CHECK (auth.uid() = buyer_id);
 CREATE POLICY "Authenticated users can create payments" ON public.payments FOR INSERT TO authenticated WITH CHECK (
   EXISTS ( SELECT 1 FROM public.orders o WHERE o.id = payments.order_id AND o.buyer_id = auth.uid() )
+);
+CREATE POLICY "Users can delete their own payments" ON public.payments FOR DELETE USING (
+  EXISTS (
+    SELECT 1 FROM public.orders o
+    WHERE o.id = payments.order_id AND o.buyer_id = auth.uid()
+  )
+);
+CREATE POLICY "Sellers can view payments of their orders"
+ON public.payments FOR SELECT
+USING (
+  EXISTS (
+    SELECT 1 FROM public.order_items oi
+    JOIN public.products p ON p.id = oi.product_id
+    WHERE oi.order_id = payments.order_id
+      AND p.seller_id = auth.uid()
+  )
 );
 
 -- IMAGE PRODUITS (PRODUCT_IMAGES)

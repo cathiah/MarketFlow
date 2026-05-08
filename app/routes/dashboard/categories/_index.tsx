@@ -1,7 +1,7 @@
 import { data } from "react-router";
 import type { Route } from "./+types/_index";
 import { getCategories, performDeleteCategory } from "./categories.server";
-import { CategoryList } from "~/components/categories/CategoryList";
+import { CategoryList } from "~/components/dashboard/categories/CategoryList";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const { categories, headers } = await getCategories(request);
