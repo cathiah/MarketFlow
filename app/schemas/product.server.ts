@@ -1,6 +1,24 @@
 export async function validateProduct(formData: FormData, supabase: any, productId?: string) {
   const errors: Record<string, string> = {};
   
+  const rawAttributeKeys = formData.getAll("attribute_key").map((value) => String(value).trim());
+  const rawAttributeValues = formData.getAll("attribute_value").map((value) => String(value));
+
+  const attributes: Record<string, string | number | boolean> = {};
+  rawAttributeKeys.forEach((key, index) => {
+    if (!key) return;
+    const rawValue = String(rawAttributeValues[index] || "").trim();
+    if (rawValue === "") return;
+
+    if (/^(true|false)$/i.test(rawValue)) {
+      attributes[key] = rawValue.toLowerCase() === "true";
+    } else if (!Number.isNaN(Number(rawValue)) && rawValue !== "") {
+      attributes[key] = Number(rawValue);
+    } else {
+      attributes[key] = rawValue;
+    }
+  });
+
   const data = {
     title: String(formData.get("title") || "").trim(),
     description: String(formData.get("description") || "").trim(),
@@ -9,6 +27,7 @@ export async function validateProduct(formData: FormData, supabase: any, product
     stock_quantity: Number(formData.get("stock_quantity")),
     category_id: formData.get("category_id") as string,
     is_published: formData.get("is_published") === "on",
+    attributes: Object.keys(attributes).length > 0 ? attributes : null,
   };
 
   if (data.title.length < 10) errors.title = "Le titre doit faire au moins 10 caractères.";

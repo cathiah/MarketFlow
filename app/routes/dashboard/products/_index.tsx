@@ -1,5 +1,5 @@
 import { data } from "react-router";
-import { MyProductsView } from "~/components/dashboard/products/MyProductsView";
+import { ProductsView } from "~/components/dashboard/products/ProductsView";
 import type { Route } from "./+types/_index";
 import { getSellerProducts, performDeleteProduct } from "./products.server";
 
@@ -21,6 +21,6 @@ export const meta: Route.MetaFunction = ({ data }) => {
   ];
 }
 
-export default function Index({ loaderData }: Route.ComponentProps) {
-  return <MyProductsView products={loaderData.products} />;
+export default function ProductsPage({ loaderData }: Route.ComponentProps) {
+  return <ProductsView products={loaderData.products} />;
 }

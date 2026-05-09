@@ -15,16 +15,16 @@ export async function action({ request }: Route.ActionArgs) {
 
 export const meta: Route.MetaFunction = () => {
   return [
-    { title: "Notifications | MarketFlow" },
+    { title: "Commandes en attente | MarketFlow" },
     {
       name: "description",
       content:
-        "Restez informé de vos activités sur MarketFlow. Gérez vos demandes d'achat en attente et vos alertes en temps réel.",
+        "Gérez vos commandes en attente sur MarketFlow. Validez ou mettez à jour le statut de vos transactions en cours.",
     },
-    { property: "og:title", content: "Notifications | MarketFlow" },
+    { property: "og:title", content: "Commandes en attente | MarketFlow" },
     {
       property: "og:description",
-      content: "Consultez vos notifications et gérez vos demandes d'achat en toute simplicité.",
+      content: "Suivi et gestion des commandes prioritaires pour votre boutique.",
     },
     { property: "og:type", content: "website" },
     { name: "robots", content: "noindex, nofollow" },
@@ -32,6 +32,6 @@ export const meta: Route.MetaFunction = () => {
   ];
 };
 
-export default function Notifications({ loaderData }: Route.ComponentProps) {
+export default function PendingOrdersPage({ loaderData }: Route.ComponentProps) {
   return <PendingOrdersView orders={loaderData.orders} />;
 }

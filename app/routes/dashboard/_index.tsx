@@ -1,7 +1,7 @@
 import type { Route } from "./+types/_index";
 import { data } from "react-router";
 import { performGetDashboardData } from "./dashboard.server";
-import { DashboardView } from "~/components/dashboard/DashboardView";
+import { DashboardView } from "~/components/dashboard/DashboardView/DashboardView";
 
 export async function loader({ request }: Route.LoaderArgs) {
   return await performGetDashboardData(request);

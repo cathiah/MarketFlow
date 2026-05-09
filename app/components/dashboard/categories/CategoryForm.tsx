@@ -5,7 +5,7 @@ import {
   ArrowLeft
 } from "lucide-react";
 import { StatusMessage } from "~/components/shared/StatusMessage";
-import { slugify } from "~/utils/slugify";
+import { slugify } from "~/components/dashboard/products/ProductForm/utils/slugify";
 import { InputField, FormActions } from "~/components/shared/FormFields";
 
 interface Category {

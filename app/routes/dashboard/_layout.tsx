@@ -1,8 +1,7 @@
 import { data, Outlet, useLocation, useRouteError } from "react-router";
 import type { Route } from "./+types/_layout";
 import { RouteErrorBoundary } from "~/components/error/RouteErrorBoundary";
-import { DashboardSidebar } from "~/components/dashboard/DashboardSidebar";
-import { DashboardHeader } from "~/components/dashboard/DashboardHeader";
+import { DashboardSidebar, DashboardHeader } from "~/components/dashboard/layout";
 import { redirect, href } from "react-router";
 import { createClient } from "~/lib/supabase.server";
 import type { Profile } from "~/types/profile";

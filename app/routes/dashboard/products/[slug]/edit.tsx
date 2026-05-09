@@ -42,7 +42,7 @@ export const meta: Route.MetaFunction = ({ data }) => {
 };
 
 
-export default function EditProduct({ loaderData, actionData }: Route.ComponentProps) {
+export default function EditProductPage({ loaderData, actionData }: Route.ComponentProps) {
   return (
     <ProductForm 
       actionData={actionData} 

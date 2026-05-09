@@ -27,7 +27,7 @@ export const meta: Route.MetaFunction = () => {
   ];
 }
 
-export default function AddProduct({ loaderData, actionData }: Route.ComponentProps) {
+export default function AddProductPage({ loaderData, actionData }: Route.ComponentProps) {
   return (
     <ProductForm 
       actionData={actionData} 

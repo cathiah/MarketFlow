@@ -30,19 +30,20 @@ export const NavItem: React.FC<NavItemProps> = ({ to, label, icon: Icon, onClick
             <span className="absolute bottom-0 left-0 w-full h-0.5 bg-primary rounded-full" />
           )}
 
-          <span className={`shrink-0 transition-transform duration-200 ${mobile ? "group-hover:scale-110" : ""}`}>
+          <span className={`flex-shrink-0 transition-transform duration-200 ${mobile ? "group-hover:scale-110" : ""}`}>
             <Icon size={mobile ? 20 : 18} />
           </span>
 
           {!mobile && (
             <span
-              className="
-                overflow-hidden whitespace-nowrap
-                max-w-0 opacity-0
-                group-hover:max-w-30 group-hover:opacity-100
+              className={`
+                overflow-hidden whitespace-nowrap text-sm font-medium
                 transition-all duration-300 ease-in-out
-                text-sm font-medium
-              "
+                ${isActive
+                  ? "max-w-[120px] opacity-100"
+                  : "max-w-0 opacity-0 group-hover:max-w-[120px] group-hover:opacity-100"
+                }
+              `}
             >
               {label}
             </span>
