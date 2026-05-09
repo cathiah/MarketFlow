@@ -51,7 +51,15 @@ export const ProductView: React.FC<ProductViewProps> = React.memo(function Produ
             <ProductAttributes attributes={product.attributes} />
           </div>
 
-          <ProductStatusFooter isPublished={product.is_published} />
+          <ProductStatusFooter
+            isPublished={product.is_published}
+            product={product}
+            images={allImages}
+            currentIndex={currentIndex}
+            onNext={nextImage}
+            onPrev={prevImage}
+            onSelect={setCurrentIndex}
+          />
         </motion.div>
       </div>
     </div>
