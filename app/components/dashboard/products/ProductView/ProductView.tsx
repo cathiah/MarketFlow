@@ -8,13 +8,22 @@ import { ProductAttributes } from "./ProductAttributes";
 import { ProductStatusFooter } from "./ProductStatusFooter";
 import { useProductImages } from "./hooks/useProductImages";
 import type { Product } from "~/types/products";
+import type { Review } from "~/types/reviews";
 
 interface ProductViewProps {
   product: Product;
+  likeCount: number;
+  isLiked: boolean;
+  reviews: Review[];
+  userReview: Review | null;
 }
 
 export const ProductView: React.FC<ProductViewProps> = React.memo(function ProductView({
   product,
+  likeCount,
+  isLiked,
+  reviews,
+  userReview,
 }) {
   const { allImages, currentIndex, setCurrentIndex, nextImage, prevImage } =
     useProductImages(product);
@@ -59,6 +68,10 @@ export const ProductView: React.FC<ProductViewProps> = React.memo(function Produ
             onNext={nextImage}
             onPrev={prevImage}
             onSelect={setCurrentIndex}
+            likeCount={likeCount}
+            isLiked={isLiked}
+            reviews={reviews}
+            userReview={userReview}
           />
         </motion.div>
       </div>

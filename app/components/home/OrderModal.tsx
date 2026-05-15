@@ -27,6 +27,15 @@ export function OrderModal({ product, onClose }: OrderModalProps) {
     }
   }, [result, onClose]);
 
+  // Fermer avec Escape
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && !isSubmitting) onClose();
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [isSubmitting, onClose]);
+
   function handleBackdropClick(e: React.MouseEvent<HTMLDialogElement>) {
     if (e.target === dialogRef.current && !isSubmitting) onClose();
   }
@@ -46,14 +55,18 @@ export function OrderModal({ product, onClose }: OrderModalProps) {
     new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" }).format(n);
 
   return (
-    <dialog ref={dialogRef} className="modal" onClick={handleBackdropClick}>
-      <div className="modal-box flex flex-col gap-4">
+    <dialog
+      ref={dialogRef}
+      className="modal modal-bottom sm:modal-middle"
+      onClick={handleBackdropClick}
+    >
+      <div className="modal-box w-full max-w-lg mx-auto flex flex-col gap-4 rounded-t-2xl sm:rounded-2xl">
         {/* En-tête */}
         <div className="flex items-start justify-between">
           <h3 className="font-bold text-lg">Confirmer la commande</h3>
           <button
             type="button"
-            className="btn btn-sm btn-circle btn-ghost"
+            className="btn btn-sm btn-circle btn-ghost shrink-0"
             onClick={onClose}
             disabled={isSubmitting}
             aria-label="Fermer"
@@ -62,18 +75,19 @@ export function OrderModal({ product, onClose }: OrderModalProps) {
           </button>
         </div>
 
-        <div className="flex gap-4 items-center">
+        {/* Résumé produit */}
+        <div className="flex gap-3 sm:gap-4 items-center">
           {product.main_image_url ? (
             <img
               src={product.main_image_url}
               alt={product.title}
-              className="w-16 h-16 rounded-lg object-cover shrink-0"
+              className="w-14 h-14 sm:w-16 sm:h-16 rounded-lg object-cover shrink-0"
             />
           ) : (
-            <div className="w-16 h-16 rounded-lg bg-base-300 shrink-0" />
+            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-lg bg-base-300 shrink-0" />
           )}
-          <div className="flex flex-col gap-1">
-            <p className="font-semibold line-clamp-2">{product.title}</p>
+          <div className="flex flex-col gap-1 min-w-0">
+            <p className="font-semibold line-clamp-2 text-sm sm:text-base">{product.title}</p>
             <p className="text-sm text-base-content/60">
               Prix unitaire :{" "}
               <span className="text-accent font-medium">{fmt(unitPrice)}</span>
@@ -88,6 +102,7 @@ export function OrderModal({ product, onClose }: OrderModalProps) {
 
         {!result?.success && (
           <>
+            {/* Quantité */}
             <div className="form-control gap-1">
               <label className="label" htmlFor="order-qty">
                 <span className="label-text font-medium">Quantité</span>
@@ -98,6 +113,7 @@ export function OrderModal({ product, onClose }: OrderModalProps) {
               <input
                 id="order-qty"
                 type="number"
+                inputMode="numeric"
                 min={1}
                 max={product.stock_quantity}
                 value={quantity}
@@ -107,6 +123,7 @@ export function OrderModal({ product, onClose }: OrderModalProps) {
               />
             </div>
 
+            {/* Total */}
             <div className="flex justify-between items-center rounded-xl bg-base-300 px-4 py-3">
               <span className="text-sm font-medium">Total</span>
               <span className="text-lg font-bold text-accent">{fmt(total)}</span>
@@ -114,6 +131,7 @@ export function OrderModal({ product, onClose }: OrderModalProps) {
           </>
         )}
 
+        {/* Message de statut */}
         {result && (
           <StatusMessage
             message={result.message}
@@ -121,6 +139,7 @@ export function OrderModal({ product, onClose }: OrderModalProps) {
           />
         )}
 
+        {/* Actions */}
         {!result?.success && (
           <fetcher.Form method="post">
             <input type="hidden" name="productId" value={product.id} />

@@ -36,6 +36,10 @@ export async function handleAuthAction(request: Request) {
   const intent = formData.get("intent");
   const rawData = Object.fromEntries(formData);
 
+  // Normalisation en minuscules avant validation
+  if (typeof rawData.username === "string") rawData.username = rawData.username.toLowerCase();
+  if (typeof rawData.identifier === "string") rawData.identifier = rawData.identifier.toLowerCase();
+
   // --- LOGOUT ---
   if (intent === "logout") {
     await supabase.auth.signOut();

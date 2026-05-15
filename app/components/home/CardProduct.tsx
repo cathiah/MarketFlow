@@ -15,7 +15,7 @@ const CardProduct: React.FC<CardProductProps> = ({ product, onBuy }) => {
   const outOfStock = product.stock_quantity <= 0;
 
   return (
-    <div className="card w-72 bg-base-200 shadow-xl border border-base-300 hover:border-primary transition-colors group">
+    <div className="relative card w-full bg-base-200 shadow-xl border border-base-300 hover:border-primary transition-colors group">
       {!outOfStock && (
         <div className="absolute top-2 right-2 z-10">
           <div className="badge badge-secondary badge-sm">En stock</div>
@@ -30,14 +30,14 @@ const CardProduct: React.FC<CardProductProps> = ({ product, onBuy }) => {
             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
           />
         ) : (
-          <div className="flex flex-col items-center gap-2 opacity-20">
+          <div className="flex flex-col items-center justify-center h-full gap-2 opacity-20">
             <span className="loading loading-ghost loading-lg"></span>
             <p className="text-xs italic">Aucune image</p>
           </div>
         )}
       </figure>
 
-      <div className="card-body p-5">
+      <div className="card-body p-4 sm:p-5">
         <h2 className="card-title text-base line-clamp-1 text-secondary">
           {product.title}
         </h2>

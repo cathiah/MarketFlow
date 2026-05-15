@@ -45,6 +45,8 @@ export default [
       route("login", authDir("login.tsx")),
       route("register", authDir("register.tsx")),
       route("logout", authDir("logout.tsx")),
+      route("forgot-password", authDir("forgot-password.tsx")),
+      route("reset-password", authDir("reset-password.tsx")),
     ]),
   ]),
 
@@ -57,6 +59,8 @@ export default [
         route("add", productsDir("add.tsx")),
         route(":slug", productsDir("[slug]/_index.tsx")),
         route(":slug/edit", productsDir("[slug]/edit.tsx")),
+        route("api/like", productsDir("api/like.ts")),
+        route("api/review", productsDir("api/review.ts")),
       ]),
   
       ...prefix("categories", [

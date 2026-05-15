@@ -11,21 +11,14 @@ import { ArticleReviews } from "./ArticleReviews";
 import { useArticleOrder } from "./hooks/useArticleOrder";
 import { OrderModal } from "~/components/home/OrderModal";
 import type { Product } from "~/types/products";
-
-interface Review {
-  id: string;
-  rating: number;
-  comment: string | null;
-  created_at: string;
-  profiles: { username: string | null; avatar_url: string | null } | null;
-}
+import type { Review } from "~/types/reviews";
 
 interface ArticleViewProps {
   product: Product & { categories: { name: string } | null };
   userId: string | null;
   likesCount: number;
   userHasLiked: boolean;
-  reviews: Review[];
+  reviews: Omit<Review, "product_id" | "user_id">[];
   userReview: { id: string; rating: number; comment: string | null } | null;
   avgRating: number | null;
 }

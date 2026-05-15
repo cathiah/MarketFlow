@@ -1,7 +1,7 @@
 import { data } from "react-router";
 import { createClient } from "~/lib/supabase.server";
 import type { Product } from "~/types/products";
-import type { Review, ReviewProfile } from "~/types/review";
+import type { Review, ReviewProfile } from "~/types/reviews";
 
 export async function getArticleBySlug(request: Request, slug: string | undefined) {
   const { supabase, headers } = createClient(request);
@@ -44,7 +44,7 @@ export async function getArticleBySlug(request: Request, slug: string | undefine
       .eq("product_id", product.id)
       .order("created_at", { ascending: false });
 
-    const reviews: Review[] = (rawReviews ?? []).map((r) => {
+    const reviews: Omit<Review, "user_id" | "product_id">[] = (rawReviews ?? []).map((r) => {
       const rawProfiles = r.profiles as
         | { username: string | null; avatar_url: string | null }
         | { username: string | null; avatar_url: string | null }[]

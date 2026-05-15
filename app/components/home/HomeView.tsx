@@ -47,10 +47,15 @@ export function HomeView({ products, userId }: HomeViewProps) {
 
   return (
     <>
+      {/* Barre de filtres sticky */}
       <div className="sticky top-16 z-40 bg-base-100/80 backdrop-blur-md border-b border-base-content/10 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 py-3 flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
-          <div className="relative flex-1">
-            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 opacity-40 pointer-events-none" />
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 py-3 flex flex-col sm:flex-row gap-2 sm:gap-3 items-stretch sm:items-center">
+          {/* Recherche */}
+          <div className="relative flex-1 min-w-0">
+            <Search
+              size={16}
+              className="absolute left-3 top-1/2 -translate-y-1/2 opacity-40 pointer-events-none"
+            />
             <input
               type="text"
               value={search}
@@ -62,34 +67,39 @@ export function HomeView({ products, userId }: HomeViewProps) {
               <button
                 onClick={() => handleSearch("")}
                 className="absolute right-2 top-1/2 -translate-y-1/2 btn btn-ghost btn-xs btn-circle"
+                aria-label="Effacer la recherche"
               >
                 <X size={14} />
               </button>
             )}
           </div>
 
-          {categories.length > 0 && (
-            <select
-              value={category}
-              onChange={(e) => handleCategory(e.target.value)}
-              className="select select-bordered select-sm w-full sm:w-48"
-            >
-              <option value="all">Toutes les catégories</option>
-              {categories.map((cat) => (
-                <option key={cat} value={cat}>{cat}</option>
-              ))}
-            </select>
-          )}
+          {/* Ligne basse sur mobile : catégorie + compteur */}
+          <div className="flex items-center gap-2">
+            {categories.length > 0 && (
+              <select
+                value={category}
+                onChange={(e) => handleCategory(e.target.value)}
+                className="select select-bordered select-sm flex-1 sm:flex-none sm:w-48 min-w-0"
+              >
+                <option value="all">Toutes les catégories</option>
+                {categories.map((cat) => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
+              </select>
+            )}
 
-          <span className="text-xs opacity-40 whitespace-nowrap self-center">
-            {filtered.length} résultat{filtered.length !== 1 ? "s" : ""}
-          </span>
+            <span className="text-xs opacity-40 whitespace-nowrap shrink-0">
+              {filtered.length} résultat{filtered.length !== 1 ? "s" : ""}
+            </span>
+          </div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 py-8">
+      {/* Grille de produits */}
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 py-6 sm:py-8">
         {paginated.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 justify-items-center">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
             {paginated.map((product) => (
               <CardProduct
                 key={product.id}
@@ -99,9 +109,9 @@ export function HomeView({ products, userId }: HomeViewProps) {
             ))}
           </div>
         ) : (
-          <div className="py-24 text-center opacity-40 italic flex flex-col items-center gap-2">
+          <div className="py-16 sm:py-24 text-center opacity-40 italic flex flex-col items-center gap-2">
             <Search size={32} className="opacity-30" />
-            <p>Aucun produit ne correspond à votre recherche.</p>
+            <p className="text-sm sm:text-base">Aucun produit ne correspond à votre recherche.</p>
             <button
               onClick={() => { handleSearch(""); handleCategory("all"); }}
               className="btn btn-ghost btn-xs mt-2 not-italic opacity-70"
@@ -111,12 +121,14 @@ export function HomeView({ products, userId }: HomeViewProps) {
           </div>
         )}
 
+        {/* Pagination */}
         {totalPages > 1 && (
-          <div className="flex justify-center items-center gap-1 mt-10 flex-wrap">
+          <div className="flex justify-center items-center gap-1 mt-8 sm:mt-10 flex-wrap">
             <button
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={safePage === 1}
               className="btn btn-ghost btn-sm"
+              aria-label="Page précédente"
             >
               ‹
             </button>
@@ -125,12 +137,12 @@ export function HomeView({ products, userId }: HomeViewProps) {
               const show =
                 p === 1 ||
                 p === totalPages ||
-                Math.abs(p - safePage) <= 2;
-              const showEllipsisBefore = p === safePage - 3 && p > 2;
-              const showEllipsisAfter = p === safePage + 3 && p < totalPages - 1;
+                Math.abs(p - safePage) <= 1;
+              const showEllipsisBefore = p === safePage - 2 && p > 2;
+              const showEllipsisAfter = p === safePage + 2 && p < totalPages - 1;
 
               if (showEllipsisBefore || showEllipsisAfter) {
-                return <span key={p} className="px-1 opacity-40">…</span>;
+                return <span key={p} className="px-1 opacity-40 text-sm">…</span>;
               }
               if (!show) return null;
 
@@ -138,7 +150,8 @@ export function HomeView({ products, userId }: HomeViewProps) {
                 <button
                   key={p}
                   onClick={() => setPage(p)}
-                  className={`btn btn-sm ${p === safePage ? "btn-primary" : "btn-ghost"}`}
+                  className={`btn btn-sm min-w-8 ${p === safePage ? "btn-primary" : "btn-ghost"}`}
+                  aria-current={p === safePage ? "page" : undefined}
                 >
                   {p}
                 </button>
@@ -149,6 +162,7 @@ export function HomeView({ products, userId }: HomeViewProps) {
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={safePage === totalPages}
               className="btn btn-ghost btn-sm"
+              aria-label="Page suivante"
             >
               ›
             </button>
@@ -156,6 +170,7 @@ export function HomeView({ products, userId }: HomeViewProps) {
         )}
       </div>
 
+      {/* Modal commande */}
       {selectedProduct && (
         <OrderModal
           product={selectedProduct}

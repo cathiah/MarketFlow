@@ -40,7 +40,7 @@ export default function RegisterPage({ actionData }: Route.ComponentProps) {
         title="Créer un compte" 
         subtitle="Rejoignez notre communauté en quelques clics." 
       />
-      <RegisterForm actionData={actionData} />
+      <RegisterForm />
     </div>
   );
 }

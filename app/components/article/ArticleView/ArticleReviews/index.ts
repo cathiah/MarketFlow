@@ -1,0 +1,1 @@
+export { ArticleReviews } from "./ArticleReviews";
