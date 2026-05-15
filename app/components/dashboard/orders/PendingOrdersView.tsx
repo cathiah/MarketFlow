@@ -54,8 +54,7 @@ export const PendingOrdersView = ({ orders }: PendingOrdersViewProps) => {
         !q ||
         order.id.toLowerCase().includes(q) ||
         order.buyer?.full_name?.toLowerCase().includes(q) ||
-        order.buyer?.email?.toLowerCase().includes(q) ||
-        order.buyer?.username?.toLowerCase().includes(q);
+        order.buyer?.email?.toLowerCase().includes(q);
 
       return matchesStatus && matchesSearch;
     });
@@ -92,6 +91,7 @@ export const PendingOrdersView = ({ orders }: PendingOrdersViewProps) => {
           />
         </>
       ) : orders && orders.length > 0 ? (
+        // Orders exist but none match filters
         <div className="flex flex-col items-center justify-center py-20 bg-base-200/30 rounded-[3rem] border-2 border-dashed border-base-300">
           <p className="text-lg font-semibold">Aucun résultat</p>
           <p className="opacity-50 mt-1 text-sm">
