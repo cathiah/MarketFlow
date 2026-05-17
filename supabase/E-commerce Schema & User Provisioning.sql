@@ -1,8 +1,15 @@
 -- ==========================================
+-- SCHEMA COMPLET SUPABASE
+-- ==========================================
+
+
+-- ==========================================
 -- 1. NETTOYAGE COMPLET (Reset)
 -- ==========================================
 DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 DROP FUNCTION IF EXISTS public.handle_new_user();
+DROP TABLE IF EXISTS public.notification_reads CASCADE;
+DROP TABLE IF EXISTS public.product_likes CASCADE;
 DROP TABLE IF EXISTS public.reviews CASCADE;
 DROP TABLE IF EXISTS public.order_items CASCADE;
 DROP TABLE IF EXISTS public.orders CASCADE;
@@ -14,12 +21,14 @@ DROP TABLE IF EXISTS public.profiles CASCADE;
 DROP TYPE IF EXISTS user_role;
 DROP TYPE IF EXISTS order_status;
 
+
 -- ==========================================
 -- 2. EXTENSIONS ET TYPES ENUM
 -- ==========================================
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TYPE user_role AS ENUM ('buyer', 'seller', 'admin');
 CREATE TYPE order_status AS ENUM ('pending', 'paid', 'shipped', 'delivered', 'cancelled');
+
 
 -- ==========================================
 -- 3. TABLES PRINCIPALES
@@ -97,6 +106,37 @@ CREATE TABLE public.payments (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- TABLE LIKES
+CREATE TABLE IF NOT EXISTS public.product_likes (
+  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id     UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
+  product_id  UUID REFERENCES public.products(id) ON DELETE CASCADE NOT NULL,
+  created_at  TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE (user_id, product_id)
+);
+
+-- TABLE REVIEWS
+CREATE TABLE IF NOT EXISTS public.reviews (
+  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id     UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
+  product_id  UUID REFERENCES public.products(id) ON DELETE CASCADE NOT NULL,
+  rating      SMALLINT NOT NULL CHECK (rating BETWEEN 1 AND 5),
+  comment     TEXT,
+  created_at  TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE (user_id, product_id)
+);
+
+-- TABLE NOTIFICATION READS
+-- Clé composite sous forme de string : "order:<id>", "review:<id>", "like:<productId>:<authorId>"
+CREATE TABLE IF NOT EXISTS public.notification_reads (
+  id                UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id           UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
+  notification_key  TEXT NOT NULL,
+  read_at           TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE (user_id, notification_key)
+);
+
+
 -- ==========================================
 -- 4. FONCTIONS ET AUTOMATISATION
 -- ==========================================
@@ -120,11 +160,13 @@ CREATE TRIGGER on_auth_user_created
 AFTER INSERT ON auth.users 
 FOR EACH ROW EXECUTE PROCEDURE public.handle_new_user();
 
+
 -- ==========================================
 -- 5. STOCKAGE (BUCKETS)
 -- ==========================================
 INSERT INTO storage.buckets (id, name, public) VALUES ('avatars', 'avatars', true) ON CONFLICT DO NOTHING;
 INSERT INTO storage.buckets (id, name, public) VALUES ('products', 'products', true) ON CONFLICT DO NOTHING;
+
 
 -- ==========================================
 -- 6. SÉCURITÉ RLS (POLITIQUES)
@@ -174,6 +216,7 @@ CREATE POLICY "Users can delete their own orders" ON public.orders FOR DELETE US
 CREATE POLICY "Admins can update orders" ON public.orders FOR UPDATE 
 USING ((SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin')
 WITH CHECK ((SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin');
+CREATE POLICY "Users can update their own orders" ON public.orders FOR UPDATE USING (auth.uid() = buyer_id) WITH CHECK (auth.uid() = buyer_id);
 
 -- DÉTAILS COMMANDES (ORDER_ITEMS)
 ALTER TABLE public.order_items ENABLE ROW LEVEL SECURITY;
@@ -186,7 +229,6 @@ ALTER TABLE public.payments ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users can view their own payments" ON public.payments FOR SELECT USING (
   EXISTS ( SELECT 1 FROM public.orders o WHERE o.id = payments.order_id AND o.buyer_id = auth.uid() )
 );
-CREATE POLICY "Users can update their own orders" ON public.orders FOR UPDATE USING (auth.uid() = buyer_id) WITH CHECK (auth.uid() = buyer_id);
 CREATE POLICY "Authenticated users can create payments" ON public.payments FOR INSERT TO authenticated WITH CHECK (
   EXISTS ( SELECT 1 FROM public.orders o WHERE o.id = payments.order_id AND o.buyer_id = auth.uid() )
 );
@@ -230,14 +272,39 @@ CREATE POLICY "Sellers can delete their product images" ON public.product_images
   )
 );
 
+-- LIKES
+ALTER TABLE public.product_likes ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Likes are public"  ON public.product_likes FOR SELECT USING (true);
+CREATE POLICY "Users can like"    ON public.product_likes FOR INSERT TO authenticated WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can unlike"  ON public.product_likes FOR DELETE USING (auth.uid() = user_id);
+
+-- REVIEWS
+ALTER TABLE public.reviews ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Reviews are public"       ON public.reviews FOR SELECT USING (true);
+CREATE POLICY "Buyers can review"        ON public.reviews FOR INSERT TO authenticated WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Buyers can update review" ON public.reviews FOR UPDATE USING (auth.uid() = user_id);
+CREATE POLICY "Buyers can delete review" ON public.reviews FOR DELETE USING (auth.uid() = user_id);
+
+-- NOTIFICATION READS
+ALTER TABLE public.notification_reads ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Users can read their own reads"
+  ON public.notification_reads FOR SELECT
+  USING (auth.uid() = user_id);
+CREATE POLICY "Users can insert their own reads"
+  ON public.notification_reads FOR INSERT TO authenticated
+  WITH CHECK (auth.uid() = user_id);
+
 -- STOCKAGE (STORAGE)
 CREATE POLICY "Images are public" ON storage.objects FOR SELECT USING (bucket_id IN ('avatars', 'products'));
 CREATE POLICY "Sellers can upload images" ON storage.objects FOR INSERT TO authenticated 
 WITH CHECK (bucket_id IN ('avatars', 'products'));
 
+
 -- ==========================================
 -- 7. INDEX POUR LA PERFORMANCE
 -- ==========================================
-CREATE INDEX idx_products_attributes ON public.products USING GIN (attributes);
-CREATE INDEX idx_products_category ON public.products(category_id);
-CREATE INDEX idx_profiles_username ON public.profiles(username);
+CREATE INDEX idx_products_attributes       ON public.products USING GIN (attributes);
+CREATE INDEX idx_products_category         ON public.products(category_id);
+CREATE INDEX idx_profiles_username         ON public.profiles(username);
+CREATE INDEX idx_notification_reads_user   ON public.notification_reads(user_id);
+CREATE INDEX idx_notification_reads_key    ON public.notification_reads(notification_key);
