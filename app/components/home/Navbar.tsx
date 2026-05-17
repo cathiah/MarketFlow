@@ -8,9 +8,14 @@ import { NavLinks } from "./NavLinks";
 export interface NavbarProps {
   user: Profile | null;
   isAuthorized: boolean;
+  unreadCount?: number;
 }
 
-export const Navbar: React.FC<NavbarProps> = React.memo(function Navbar({ user, isAuthorized }) {
+export const Navbar: React.FC<NavbarProps> = React.memo(function Navbar({
+  user,
+  isAuthorized,
+  unreadCount = 0,
+}) {
   const [isOpen, setIsOpen] = useState(false);
   const close = () => setIsOpen(false);
 
@@ -40,23 +45,31 @@ export const Navbar: React.FC<NavbarProps> = React.memo(function Navbar({ user, 
 
         {/* Desktop */}
         <div className="hidden md:flex items-center gap-6 lg:gap-8 min-w-0">
-          <NavLinks user={user} isAuthorized={isAuthorized} />
+          <NavLinks user={user} isAuthorized={isAuthorized} unreadCount={unreadCount} />
           <AuthButtons user={user} />
         </div>
 
         {/* Bouton hamburger mobile */}
-        <button
-          className="md:hidden btn btn-ghost btn-sm btn-circle transition-transform duration-200 active:scale-90"
-          onClick={() => setIsOpen((v) => !v)}
-          aria-label={isOpen ? "Fermer le menu" : "Ouvrir le menu"}
-          aria-expanded={isOpen}
-          aria-controls="mobile-menu"
-        >
-          {isOpen
-            ? <X size={22} className="transition-transform duration-200 rotate-90" />
-            : <Menu size={22} className="transition-transform duration-200" />
-          }
-        </button>
+        <div className="md:hidden flex items-center gap-2">
+          {/* Badge global mobile (visible même menu fermé) */}
+          {unreadCount > 0 && (
+            <span className="badge badge-error badge-sm font-bold pointer-events-none">
+              {unreadCount > 9 ? "9+" : unreadCount}
+            </span>
+          )}
+          <button
+            className="btn btn-ghost btn-sm btn-circle transition-transform duration-200 active:scale-90"
+            onClick={() => setIsOpen((v) => !v)}
+            aria-label={isOpen ? "Fermer le menu" : "Ouvrir le menu"}
+            aria-expanded={isOpen}
+            aria-controls="mobile-menu"
+          >
+            {isOpen
+              ? <X size={22} className="transition-transform duration-200 rotate-90" />
+              : <Menu size={22} className="transition-transform duration-200" />
+            }
+          </button>
+        </div>
       </div>
 
       {/* Menu mobile */}
@@ -70,7 +83,13 @@ export const Navbar: React.FC<NavbarProps> = React.memo(function Navbar({ user, 
       >
         <div className="px-4 pb-6 bg-base-200/95 backdrop-blur-md border-t border-base-content/10 overflow-y-auto">
           <div className="pt-4 flex flex-col gap-1">
-            <NavLinks user={user} isAuthorized={isAuthorized} onClick={close} mobile={true} />
+            <NavLinks
+              user={user}
+              isAuthorized={isAuthorized}
+              unreadCount={unreadCount}
+              onClick={close}
+              mobile={true}
+            />
           </div>
           <div className="mt-4">
             <AuthButtons user={user} onClose={close} />
